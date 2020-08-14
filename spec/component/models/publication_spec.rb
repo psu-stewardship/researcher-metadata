@@ -49,6 +49,46 @@ describe Publication, type: :model do
     it { is_expected.to validate_presence_of(:publication_type) }
 
     it { is_expected.to validate_inclusion_of(:publication_type).in_array(Publication.publication_types) }
+
+    it 'validates_format_of doi' do
+      pub = create :publication
+      pub.doi = 'doi:10.1012/abcd123'
+      expect(pub).to be_valid
+      pub.doi = '10.1000/123456789.ch1'
+      expect(pub).to be_valid
+      pub.doi = 'https://doi.org/10.1234/words.123.db'
+      expect(pub).to be_valid
+      pub.doi = 'Junk/doi.org/1234.abc'
+      expect(pub).not_to be_valid
+    end
+
+    it 'validates_format_of isbn' do
+      pub = create :publication
+      pub.isbn = 'ISBN 978-0-596-52068-7'
+      expect(pub).to be_valid
+      pub.isbn = '0-596-52068-9'
+      expect(pub).to be_valid
+      pub.isbn = '9780596520687'
+      expect(pub).to be_valid
+      pub.isbn = 'ISBN-13: 978-0-596-52068-7'
+      expect(pub).to be_valid
+      pub.isbn = 'JUNK/1234-5678'
+      expect(pub).not_to be_valid
+    end
+
+    it 'validates_format_of issn' do
+      pub = create :publication
+      pub.issn = '0004-637X'
+      expect(pub).to be_valid
+      pub.issn = '1471-2164'
+      expect(pub).to be_valid
+      pub.issn = 'ISSN 1389-0417'
+      expect(pub).to be_valid
+      pub.issn = 'eISSN 1086-055X'
+      expect(pub).to be_valid
+      pub.issn = 'https://website.org/work123'
+      expect(pub).not_to be_valid
+    end
   end
 
   describe 'associations' do
@@ -197,19 +237,19 @@ describe Publication, type: :model do
                          title: "Another Publication",
                          published_on: Date.new(2000, 1, 1) }
     let!(:pub2) { create :publication,
-                         doi: "https://doi.org/DOI123",
+                         doi: "https://doi.org/10.0/DOI123",
                          title: "Some Text Before The Title Some Text After",
                          published_on: Date.new(2000, 1, 1) }
     let!(:pub3) { create :publication,
-                         doi: "https://doi.org/DOI456",
+                         doi: "https://doi.org/10.0/DOI456",
                          title: "Some Text Before The Title Some Text After",
                          published_on: Date.new(2001, 2, 2) }
     let!(:pub4) { create :publication,
-                         doi: "https://doi.org/DOI111",
+                         doi: "https://doi.org/10.0/DOI111",
                          title: "Another Publication",
                          published_on: Date.new(2001, 2, 2) }
     let!(:pub5) { create :publication,
-                         doi: "https://doi.org/DOI222",
+                         doi: "https://doi.org/10.0/DOI222",
                          title: "Another Publication",
                          published_on: Date.new(2000, 1, 1) }
 
@@ -259,7 +299,7 @@ describe Publication, type: :model do
       end
     end
     context "when given publication data with a DOI that matches an existing publication" do
-      let(:doi) { "DOI456" }
+      let(:doi) { "10.0/DOI456" }
       context "when given data with a title that is a case-insensitive, partial match for an existing publication" do
         let(:title) { "THE TITLE" }
         context "when given data with no publication date" do
@@ -304,7 +344,7 @@ describe Publication, type: :model do
       end
     end
     context "when given publication data with a DOI that doesn't match an existing publication" do
-      let(:doi) { "DOI789" }
+      let(:doi) { "10.0/DOI789" }
       context "when given data with a title that is a case-insensitive, partial match for an existing publication" do
         let(:title) { "THE TITLE" }
         context "when given data with no publication date" do

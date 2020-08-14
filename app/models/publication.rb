@@ -48,6 +48,9 @@ class Publication < ApplicationRecord
 
   validates :publication_type, :title, presence: true
   validates :publication_type, inclusion: {in: publication_types }
+  validates_format_of :doi, allow_blank: true, with: /((https:\/\/doi\.org\/)|(doi:))?(10\.(\d)+\/(\S)+)/
+  validates_format_of :isbn, allow_blank: true, with: /(ISBN[-]*(1[03])*[ ]*(: ){0,1})*(([0-9Xx][- ]*){13}|([0-9Xx][- ]*){10})/
+  validates_format_of :issn, allow_blank: true, with: /(ISSN |eISSN )?[\S]{4}\-[\S]{4}/
 
   scope :visible, -> { where visible: true }
 
