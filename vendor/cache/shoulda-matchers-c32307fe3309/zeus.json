@@ -1,0 +1,11 @@
+{
+  "command": "ruby -r rubygems -r ./custom_plan -e Zeus.go",
+
+  "plan": {
+    "boot": {
+      "test_environment": {
+        "rspec": []
+      }
+    }
+  }
+}
